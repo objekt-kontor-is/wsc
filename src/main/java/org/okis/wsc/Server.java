@@ -10,7 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class Server {
 
     private final static Logger log = LoggerFactory.getLogger(Server.class);
@@ -42,6 +41,7 @@ public class Server {
             server.channel().closeFuture().sync();
         } finally {
             eventLoopGroup.shutdownGracefully();
+            log.info("Server stopped");            
         }
     }
 
@@ -49,5 +49,4 @@ public class Server {
         Server server = Initializer.createServer();
         server.run();
     }
-
 }
