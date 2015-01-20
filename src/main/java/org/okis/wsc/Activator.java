@@ -7,8 +7,9 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		// TODO Auto-generated method stub
 
+	    Server server = Initializer.createServer();
+        server.run();
 	}
 
 	@Override

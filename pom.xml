@@ -77,10 +77,17 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- OSGI -->
-		<dependency>
+		<dependency>		
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>1.4.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
+			<version>4.0.4.Final</version>
 		</dependency>
 	</dependencies>
 
@@ -141,9 +148,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>com.okis.service.core.api</Export-Package>
-						<Private-Package>com.okis.service.core.*</Private-Package>
-						<Bundle-Activator>com.okis.service.core.Activator</Bundle-Activator>
+						<Export-Package>org.okis.wsc.api</Export-Package>
+						<Private-Package>org.okis.wsc.*</Private-Package>
+						<Bundle-Activator>org.okis.wsc.Activator</Bundle-Activator>
+						<!-- Embed-Dependency>netty-codec-http;scope=compile</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive-->						
 					</instructions>
 				</configuration>
 			</plugin>
