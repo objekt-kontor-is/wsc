@@ -10,7 +10,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Server {
+
+public class Server implements Runnable {
 
     private final static Logger log = LoggerFactory.getLogger(Server.class);
 
@@ -26,7 +27,8 @@ public class Server {
         this.socketKeepAlive = socketKeepAlive;
     }
 
-    public void run() throws Exception {
+    public void run() {
+        log.info("Starting server.");
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup(1);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
@@ -36,12 +38,14 @@ public class Server {
             bootstrap.option(ChannelOption.SO_BACKLOG, socketBacklog);
             bootstrap.childOption(ChannelOption.TCP_NODELAY, tcpNoDelay);
             bootstrap.childOption(ChannelOption.SO_KEEPALIVE, socketKeepAlive);
-            ChannelFuture server = bootstrap.bind(port).sync();
+            ChannelFuture channelFuture = bootstrap.bind(port).sync();
+            
             log.info("Accepting incomming connections on port: " + port);
-            server.channel().closeFuture().sync();
+            channelFuture.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            log.info("Server has been interrupted.");
         } finally {
             eventLoopGroup.shutdownGracefully();
-            log.info("Server stopped");            
         }
     }
 
@@ -49,4 +53,5 @@ public class Server {
         Server server = Initializer.createServer();
         server.run();
     }
+
 }

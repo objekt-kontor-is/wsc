@@ -14,6 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.okis.wsc.api.Configuration;
+
 public class Initializer extends ChannelInitializer<SocketChannel> {
 
     private final static String configBundle = "wsc";

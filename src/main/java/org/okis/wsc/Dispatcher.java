@@ -38,6 +38,8 @@ public class Dispatcher extends SimpleChannelInboundHandler<FullHttpRequest> {
 
 	private Handler getHandler(FullHttpRequest request) {
 		// TODO implement
-		return null;
+		return handler;
 	}
+	
+	public static Handler handler = null;
 }
