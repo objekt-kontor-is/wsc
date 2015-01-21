@@ -23,14 +23,19 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
     public static final String threadNamePrefix = "client-async-pool";
     public static final AtomicInteger threadCounter = new AtomicInteger(0);
 
-    @Override
+    private final Resolver resolver;
+
+    public Initializer(Resolver resolver) {
+		this.resolver = resolver;
+	}
+
+	@Override
     public void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
-
         pipeline.addLast("httpDecoder", new HttpRequestDecoder());
         pipeline.addLast("httpEncoder", new HttpResponseEncoder());
         pipeline.addLast("httpAggregator", createHttpObjectAggregator());
-        pipeline.addLast("dispatcher", new Dispatcher());
+        pipeline.addLast("dispatcher", new Dispatcher(resolver));
     }
 
     public static HttpObjectAggregator createHttpObjectAggregator() {

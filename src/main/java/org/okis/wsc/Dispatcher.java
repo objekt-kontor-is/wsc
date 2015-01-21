@@ -15,11 +15,17 @@ public class Dispatcher extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final static Logger log = LoggerFactory.getLogger(Dispatcher.class);
 
-    @Override
+    private final Resolver resolver;
+
+    public Dispatcher(Resolver resolver) {
+		this.resolver = resolver;
+	}
+
+	@Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         if (!request.getDecoderResult().isSuccess())
             throw new Error(HttpResponseStatus.BAD_REQUEST);
-        Handler handler = getHandler(request);
+        Handler handler = resolver.getHandler(request);
         if (handler == null)
             throw new Error(HttpResponseStatus.NOT_FOUND);
         handler.handleRequest(ctx, request);
@@ -35,9 +41,4 @@ public class Dispatcher extends SimpleChannelInboundHandler<FullHttpRequest> {
             Responder.sendError(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, cause.getMessage());
         }
     }
-
-	private Handler getHandler(FullHttpRequest request) {
-		// TODO implement
-		return null;
-	}
 }
