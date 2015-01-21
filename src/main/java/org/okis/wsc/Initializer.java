@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Initializer extends ChannelInitializer<SocketChannel> {
 
-    private final static String configBundle = "proxy";
+    private final static String configBundle = "wsc";
 
     private static ExecutorService executorService;
 
