@@ -25,4 +25,11 @@ public class Error extends Exception {
     public synchronized Throwable fillInStackTrace() {
         return this;
     }
+
+	@Override
+	public String toString() {
+		String response = "HttpResponse [code=" + code + "]";
+        String message = getLocalizedMessage();
+        return (message != null) ? (response + ": " + message) : response;
+	}
 }
