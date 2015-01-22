@@ -7,12 +7,13 @@ import org.okis.wsc.api.Handler;
 
 public class Resolver {
 
-	public void registerHandler(Endpoint enpoint, Handler handler) {
-		// TODO Auto-generated method stub
+	private Handler defaultHandler;
 
+	public void registerHandler(Endpoint enpoint, Handler handler) {
+		defaultHandler = handler;
 	}
 
 	public Handler getHandler(FullHttpRequest request) {
-		return null;
+		return defaultHandler;
 	}
 }

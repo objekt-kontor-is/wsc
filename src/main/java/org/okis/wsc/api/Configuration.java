@@ -1,4 +1,4 @@
-package org.okis.wsc;
+package org.okis.wsc.api;
 
 import static java.lang.String.format;
 
