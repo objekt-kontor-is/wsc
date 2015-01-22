@@ -69,7 +69,7 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
     }
 
     public static Server createServer() {
-        int port = Configuration.getIntValue(configBundle, "proxyPort", 8888);
+        int port = Configuration.getIntValue(configBundle, "port", 8888);
         int socketBacklog = Configuration.getIntValue(configBundle, "socketBacklog", 8);
         boolean tcpNoDelay = Configuration.getBooleanValue(configBundle, "tcpNoDelay", true);
         boolean socketKeepAlive = Configuration.getBooleanValue(configBundle, "socketKeepAlive", true);
