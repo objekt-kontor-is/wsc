@@ -1,21 +1,10 @@
 package org.okis.wsc.api;
 
-import java.util.Arrays;
+import io.netty.bootstrap.Bootstrap;
 
-public class Endpoint {
+public interface Endpoint {
 
-	private final String [] urlPrefixes;
+    int getPort();
 
-	public Endpoint(String ... urlPrefix) {
-		urlPrefixes = urlPrefix;
-	}
-
-	public String [] getUrlPrefixes() {
-		return urlPrefixes;
-	}
-
-	@Override
-	public String toString() {
-		return "Endpoint [urlPrefixes=" + Arrays.toString(urlPrefixes) + "]";
-	}
+    Bootstrap getBootstrap();
 }

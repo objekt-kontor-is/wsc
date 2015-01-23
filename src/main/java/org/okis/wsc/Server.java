@@ -7,7 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import org.okis.wsc.api.Endpoint;
+import org.okis.wsc.api.URLTarget;
 import org.okis.wsc.api.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class Server implements Runnable {
         this.socketKeepAlive = socketKeepAlive;
     }
 
-	public void registerHandler(Endpoint enpoint, Handler handler) {
+	public void registerHandler(URLTarget enpoint, Handler handler) {
     	resolver.registerHandler(enpoint, handler);
 	}
 
