@@ -27,6 +27,11 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
 
     private final Resolver resolver;
 
+    /*private static class MyKeystore {
+        
+        public static String data = "[generated base 64 data]";
+    }*/ 
+
     public Initializer(Resolver resolver) {
 		this.resolver = resolver;
 	}
@@ -34,6 +39,7 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
 	@Override
     public void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
+        //pipeline.addLast("ssl", createSSLHandler());
         pipeline.addLast("httpDecoder", new HttpRequestDecoder());
         pipeline.addLast("httpEncoder", new HttpResponseEncoder());
         pipeline.addLast("httpAggregator", createHttpObjectAggregator());
@@ -53,6 +59,25 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
         }
     }
 
+    /*public static SslHandler createSSLHandler() {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        
+        final KeyStore keystore = KeyStore.getInstance("JKS");
+        Base64Decoder decoder = new Base64Decoder();
+         
+        //keystore.load(new ByteArrayInputStream(Base64Coder.decode(MyKeystore.data)), "yourkeystorepassword".toCharArray());
+        keystore.load(new ByteArrayInputStream(decoder.decode(MyKeystore.data)), "yourkeystorepassword".toCharArray());
+         
+        final KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+         
+        kmf.init(keystore, "yourkeystorepassword".toCharArray());
+         
+        sslContext.init(kmf.getKeyManagers(), null, null);
+        
+        return new SslHandler(sslContext);
+        return null;
+    }*/
+    
     public static ExecutorService createExecutorService() {
         int threads = Configuration.getIntValue(configBundle, "clientThreads", 10);
         int queue = Configuration.getIntValue(configBundle, "clientQueueSize", 100);
