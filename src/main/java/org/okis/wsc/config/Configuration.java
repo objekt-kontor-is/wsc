@@ -1,4 +1,4 @@
-package org.okis.wsc.api;
+package org.okis.wsc.config;
 
 import static java.lang.String.format;
 
@@ -20,15 +20,26 @@ public class Configuration {
 
     private final static Logger log = LoggerFactory.getLogger(Configuration.class);
 
-    private final static Map<String, Bundle> bundles = new ConcurrentHashMap<String, Bundle>();
+    public enum GeneralizeKeys { FROM_BEGIN, FROM_END };
 
-    private final static DateFormat germanDateParser = new SimpleDateFormat("dd.MM.yyyy");
+    private final static DateFormat [] dateParsers = { new SimpleDateFormat("dd.MM.yyyy") };
 
-    public static String getStringValue(String bundle, String key) {
+    private final Map<String, Bundle> bundles = new ConcurrentHashMap<String, Bundle>();
+    private final GeneralizeKeys generalizeKeys;
+
+    public Configuration() {
+        this(null);
+    }
+
+    public Configuration(GeneralizeKeys generalizeKeys) {
+        this.generalizeKeys = generalizeKeys;
+    }
+
+    public String getStringValue(String bundle, String key) {
         return getStringValue(bundle, key, null);
     }
 
-    public static String getStringValue(String bundleName, String key, String defaultValue) {
+    public String getStringValue(String bundleName, String key, String defaultValue) {
         Bundle bundle = bundles.get(bundleName);
         if (bundle == null)
             synchronized (bundles) {
@@ -38,15 +49,43 @@ public class Configuration {
                     bundles.put(bundleName, bundle);
                 }
             }
-        String value = bundle.getProperty(key);
-        return value == null || value.length() == 0 ? defaultValue : value;
+        if (generalizeKeys == null) {
+            String value = bundle.getProperty(key);
+            return value == null ? defaultValue : value;
+        }
+        String [] parts = key.split("\\.");
+        switch (generalizeKeys) {
+        case FROM_BEGIN:
+            for (int i = 0; i < parts.length; i ++) {
+                StringBuilder subkey = new StringBuilder(parts[i]);
+                for (int j = i + 1; j < parts.length; j ++)
+                    subkey.append(".").append(parts[j]);
+                String value = bundle.getProperty(subkey.toString());
+                if (value != null)
+                    return value;
+            }
+            break;
+        case FROM_END:
+            for (int i = parts.length; i > 0 ; i --) {
+                StringBuilder subkey = new StringBuilder(parts[0]);
+                for (int j = 1; j < i; j ++)
+                    subkey.append(".").append(parts[j]);
+                String value = bundle.getProperty(subkey.toString());
+                if (value != null)
+                    return value;
+            }
+            break;
+        default:
+            throw new UnsupportedOperationException();
+        }
+        return defaultValue;
     }
 
-    public static int getIntValue(String bundle, String key) throws ValueFormatException {
+    public int getIntValue(String bundle, String key) throws ValueFormatException {
         return getIntValue(bundle, key, 0);
     }
 
-    public static int getIntValue(String bundle, String key, int defaultValue) throws ValueFormatException {
+    public int getIntValue(String bundle, String key, int defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -57,11 +96,11 @@ public class Configuration {
         }
     }
 
-    public static long getLongValue(String bundle, String key) throws ValueFormatException {
+    public long getLongValue(String bundle, String key) throws ValueFormatException {
         return getLongValue(bundle, key, 0);
     }
 
-    public static long getLongValue(String bundle, String key, long defaultValue) throws ValueFormatException {
+    public long getLongValue(String bundle, String key, long defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -72,11 +111,11 @@ public class Configuration {
         }
     }
 
-    public static boolean getBooleanValue(String bundle, String key) throws ValueFormatException {
+    public boolean getBooleanValue(String bundle, String key) throws ValueFormatException {
         return getBooleanValue(bundle, key, false);
     }
 
-    public static boolean getBooleanValue(String bundle, String key, boolean defaultValue) throws ValueFormatException {
+    public boolean getBooleanValue(String bundle, String key, boolean defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -87,12 +126,12 @@ public class Configuration {
         throw new ValueFormatException(bundle, key, "supported values 'true' or 'false'");
     }
 
-    public static <T extends Enum<?>> T getEnumValue(String bundle, String key) throws ValueFormatException {
+    public <T extends Enum<?>> T getEnumValue(String bundle, String key) throws ValueFormatException {
         return getEnumValue(bundle, key, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<?>> T getEnumValue(String bundle, String key, T defaultValue) throws ValueFormatException {
+    public <T extends Enum<?>> T getEnumValue(String bundle, String key, T defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -103,21 +142,22 @@ public class Configuration {
         }
     }
 
-    public static Date getGermanDate(String bundle, String key) throws ValueFormatException {
-        return getGermanDate(bundle, key, null);
+    public Date getDateValue(String bundle, String key) throws ValueFormatException {
+        return getDateValue(bundle, key, null);
     }
 
-    public static Date getGermanDate(String bundle, String key, Date defaultDate) throws ValueFormatException {
+    public Date getDateValue(String bundle, String key, Date defaultDate) throws ValueFormatException {
         String value = getStringValue(bundle, key, null);
         if (value == null)
             return defaultDate;
-        synchronized (germanDateParser) {
-            try {
-                return germanDateParser.parse(value);
-            } catch (ParseException e) {
-                throw new ValueFormatException(bundle, key, e);
+        for (DateFormat parser : dateParsers)
+            synchronized (parser) {
+                try {
+                    return parser.parse(value);
+                } catch (ParseException e) {
+                }
             }
-        }
+        throw new ValueFormatException(bundle, key, "Invalid date or date format not supported");
     }
 
     public static class ValueFormatException extends RuntimeException {

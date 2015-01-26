@@ -47,11 +47,17 @@
 			<version>4.0.25.Final</version>
 		</dependency>
 		<!-- OSGI -->
-		<dependency>		
+		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>1.4.0</version>
 			<scope>provided</scope>
+		</dependency>
+		<!-- Libs -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils-core</artifactId>
+			<version>1.8.3</version>
 		</dependency>
 		<!-- Logging -->
 		<dependency>
@@ -142,8 +148,8 @@
 						<Export-Package>org.okis.wsc.api</Export-Package>
 						<Private-Package>org.okis.wsc.*</Private-Package>
 						<Bundle-Activator>org.okis.wsc.Activator</Bundle-Activator>
-						<!-- Embed-Dependency>netty-codec-http;scope=compile</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive-->						
+						<!-- Embed-Dependency>netty-codec-http;scope=compile</Embed-Dependency> 
+							<Embed-Transitive>true</Embed-Transitive -->
 					</instructions>
 				</configuration>
 			</plugin>

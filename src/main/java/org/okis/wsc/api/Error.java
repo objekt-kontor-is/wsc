@@ -17,6 +17,16 @@ public class Error extends Exception {
         this.code = code;
     }
 
+    public Error(HttpResponseStatus code, Throwable cause) {
+        super(cause);
+        this.code = code;
+    }
+
+    public Error(HttpResponseStatus code, String message, Throwable cause) {
+        super(message, cause);
+        this.code = code;
+    }
+
     public HttpResponseStatus getCode() {
         return code;
     }
@@ -30,6 +40,6 @@ public class Error extends Exception {
 	public String toString() {
 		String response = "HttpResponse [code=" + code + "]";
         String message = getLocalizedMessage();
-        return (message != null) ? (response + ": " + message) : response;
+        return message != null ? response + ": " + message : response;
 	}
 }
