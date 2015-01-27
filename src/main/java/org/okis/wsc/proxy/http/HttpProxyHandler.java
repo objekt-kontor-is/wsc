@@ -1,4 +1,4 @@
-package org.okis.wsc.proxy;
+package org.okis.wsc.proxy.http;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 import java.net.InetSocketAddress;
 
-import org.okis.wsc.config.common.ClientConfig;
+import org.okis.wsc.common.config.ClientConfig;
 
 public class HttpProxyHandler extends ChannelInboundHandlerAdapter {
 

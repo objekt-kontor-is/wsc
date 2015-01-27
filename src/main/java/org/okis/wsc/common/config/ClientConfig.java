@@ -1,4 +1,4 @@
-package org.okis.wsc.config.common;
+package org.okis.wsc.common.config;
 
 import org.okis.wsc.config.ConfigParameter;
 

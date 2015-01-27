@@ -1,4 +1,4 @@
-package org.okis.wsc;
+package org.okis.wsc.bundle;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

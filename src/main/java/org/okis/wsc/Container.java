@@ -8,6 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.okis.wsc.common.Endpoint;
+
 public class Container {
 
     private final EventLoopGroup defaultEventLoopGroup;

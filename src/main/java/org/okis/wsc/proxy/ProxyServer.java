@@ -9,7 +9,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import org.okis.wsc.Container;
-import org.okis.wsc.config.common.ServerConfig;
+import org.okis.wsc.common.config.ServerConfig;
 
 public class ProxyServer {
 
@@ -34,7 +34,7 @@ public class ProxyServer {
             protected void initChannel(SocketChannel socketChannel) throws Exception {
                 ChannelPipeline pipeline = socketChannel.pipeline();
                 initPipeline(pipeline);
-                pipeline.addLast("proxy", new ProxyHandler(client));
+                pipeline.addLast("proxy", client);
             }
         });
         return bootstrap;

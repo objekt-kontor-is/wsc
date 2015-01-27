@@ -1,4 +1,4 @@
-package org.okis.wsc;
+package org.okis.wsc.common;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
