@@ -85,7 +85,7 @@ public class Configuration {
         return getIntValue(bundle, key, 0);
     }
 
-    public int getIntValue(String bundle, String key, int defaultValue) throws ValueFormatException {
+    public Integer getIntValue(String bundle, String key, Integer defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -97,10 +97,10 @@ public class Configuration {
     }
 
     public long getLongValue(String bundle, String key) throws ValueFormatException {
-        return getLongValue(bundle, key, 0);
+        return getLongValue(bundle, key, 0l);
     }
 
-    public long getLongValue(String bundle, String key, long defaultValue) throws ValueFormatException {
+    public Long getLongValue(String bundle, String key, Long defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
@@ -115,7 +115,7 @@ public class Configuration {
         return getBooleanValue(bundle, key, false);
     }
 
-    public boolean getBooleanValue(String bundle, String key, boolean defaultValue) throws ValueFormatException {
+    public Boolean getBooleanValue(String bundle, String key, Boolean defaultValue) throws ValueFormatException {
         String value = getStringValue(bundle, key);
         if (value == null)
             return defaultValue;
