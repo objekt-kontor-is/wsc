@@ -68,7 +68,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/bundle</outputDirectory>
+							<outputDirectory>${basedir}/dependencies</outputDirectory>
 							<includeScope>compile</includeScope>
 							<excludeArtifactIds>org.apache.felix.framework</excludeArtifactIds>
 						</configuration>
