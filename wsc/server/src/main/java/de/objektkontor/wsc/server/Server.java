@@ -48,6 +48,8 @@ public class Server {
     }
 
     public static void main(String... args) throws Exception {
+        System.getProperties().setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+
         ConfigLoader configLoader = new ConfigLoader(new Configuration(), "wsc");
         ServerConfig config = configLoader.loadConfig(new ServerConfig());
         config.setBundleConfigs(configLoader);
