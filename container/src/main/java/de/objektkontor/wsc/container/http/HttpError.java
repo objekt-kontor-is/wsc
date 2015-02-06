@@ -1,4 +1,4 @@
-package de.objektkontor.wsc.container.common.http;
+package de.objektkontor.wsc.container.http;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 

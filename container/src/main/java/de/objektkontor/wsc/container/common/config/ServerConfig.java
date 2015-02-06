@@ -8,7 +8,7 @@ public class ServerConfig {
     private int port;
 
     @ConfigParameter
-    private int socketBacklog = 8;
+    private int socketBacklog = 64;
 
     @ConfigParameter
     private boolean clientTcpNoDelay = true;

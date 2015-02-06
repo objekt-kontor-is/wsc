@@ -9,7 +9,7 @@
 	<name>Web Service Server</name>
 
 	<parent>
-		<groupId>de.objektkontor</groupId>
+		<groupId>de.objekt-kontor</groupId>
 		<artifactId>wsc-pom</artifactId>
 		<version>1</version>
 		<relativePath>../pom.xml</relativePath>
