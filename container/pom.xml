@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wsc-container</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>Web Service Container</name>
@@ -11,33 +10,34 @@
 	<parent>
 		<groupId>de.objekt-kontor</groupId>
 		<artifactId>wsc-pom</artifactId>
-		<version>1</version>
+		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
+		<!-- Configuration -->
+		<dependency>
+			<groupId>de.objekt-kontor</groupId>
+			<artifactId>config</artifactId>
+		</dependency>
 		<!-- OSGI -->
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.framework</artifactId>
-			<scope>provided</scope>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
 		</dependency>
 		<!-- Netty -->
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec-http</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<!-- Configuration -->
-		<dependency>
-			<groupId>de.objektkontor</groupId>
-			<artifactId>config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -52,6 +52,10 @@
 							de.objektkontor.wsc.container,
 							de.objektkontor.wsc.container.*,
 						</Export-Package>
+						<Import-Package>
+							*,
+							io.netty.channel
+						</Import-Package>
 						<Bundle-Activator>de.objektkontor.wsc.bundle.Activator</Bundle-Activator>
 					</instructions>
 				</configuration>
@@ -70,7 +74,6 @@
 						<configuration>
 							<outputDirectory>${basedir}/dependencies</outputDirectory>
 							<includeScope>compile</includeScope>
-							<excludeArtifactIds>org.apache.felix.framework</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>

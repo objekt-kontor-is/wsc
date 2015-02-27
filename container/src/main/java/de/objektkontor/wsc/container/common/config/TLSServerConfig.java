@@ -8,7 +8,7 @@ public class TLSServerConfig extends TLSConfig {
     @ConfigParameter
     private boolean needsClientAuthentication;
 
-    public boolean getNeedsClientAuthentication() {
+    public boolean isNeedsClientAuthentication() {
         return needsClientAuthentication;
     }
 

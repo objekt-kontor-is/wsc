@@ -3,9 +3,34 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>wsc-pom</artifactId>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>WSC Master Pom</name>
+	<description>Resctor pom for WSC</description>
+	<url>https://github.com/objekt-kontor-is/wsc</url>
+
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Eugen Borth</name>
+			<email>eugen.borth@objekt-kontor.de</email>
+			<organization>Objekt-Kontor IS GmbH &amp; Co KG</organization>
+			<organizationUrl>http://www.objekt-kontor.de</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:objekt-kontor-is/wsc.git</connection>
+		<developerConnection>scm:git:git@github.com:objekt-kontor-is/wsc.git</developerConnection>
+		<url>git@github.com:objekt-kontor-is/wsc.git</url>
+	</scm>
 
 	<parent>
 		<groupId>de.objekt-kontor</groupId>
@@ -14,18 +39,35 @@
 	</parent>
 
 	<properties>
+		<osgi.version>4.3.1</osgi.version>
 		<felix.version>4.6.0</felix.version>
 		<netty.version>4.0.25.Final</netty.version>
 	</properties>
 
 	<modules>
-		<module>container</module>
 		<module>server</module>
+		<module>container</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- Configuration -->
+			<dependency>
+				<groupId>de.objekt-kontor</groupId>
+				<artifactId>config</artifactId>
+				<version>1.0.0</version>
+			</dependency>
 			<!-- OSGI -->
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.core</artifactId>
+				<version>${osgi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.compendium</artifactId>
+				<version>${osgi.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>org.apache.felix.framework</artifactId>
@@ -37,7 +79,6 @@
 				<artifactId>netty-codec-http</artifactId>
 				<version>${netty.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 </project>

@@ -26,7 +26,7 @@ public class HttpResponder {
     }
 
     public static ChannelFuture sendResponse(ChannelHandlerContext context, String contentType, ByteBuf content) {
-        return sendResponse(context.channel(), contentType, content);
+        return sendResponse(context.channel(), contentType, content).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     public static ChannelFuture sendResponse(Channel channel, String contentType, ByteBuf content) {

@@ -1,46 +1,35 @@
 package de.objektkontor.wsc.container.proxy;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import de.objektkontor.wsc.container.common.Server;
+import de.objektkontor.wsc.container.Pipeline;
 import de.objektkontor.wsc.container.common.config.ServerConfig;
+import de.objektkontor.wsc.container.core.AbstractEndpoint;
 
-public abstract class ProxyServer extends Server {
+public class ProxyServer extends AbstractEndpoint<ServerConfig> {
 
-    private final ServerConfig config;
+    public static final String PROXY_HANDLER = "proxy";
+
     private final ProxyClient client;
-    private final EventLoopGroup group;
 
-    public ProxyServer(ServerConfig config, EventLoopGroup group, ProxyClient client) {
-        this.config = config;
-        this.group = group;
+    public ProxyServer(String id, ServerConfig config, EventLoopGroup group, ProxyClient client) {
+        super(id, config, group);
         this.client = client;
     }
 
     @Override
-    public ServerBootstrap getBootstrap() {
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        bootstrap.channel(NioServerSocketChannel.class);
-        bootstrap.option(ChannelOption.SO_BACKLOG, config.getSocketBacklog());
-        bootstrap.childOption(ChannelOption.TCP_NODELAY, config.isClientTcpNoDelay());
-        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, config.isClientKeepAlive());
-        bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            protected void initChannel(SocketChannel socketChannel) throws Exception {
-                ChannelPipeline pipeline = socketChannel.pipeline();
-                initPipeline(pipeline);
-                pipeline.addLast("proxy", client);
-            }
-        });
-        bootstrap.group(group);
-        return bootstrap;
+    public Pipeline[] pipelines() {
+        return new Pipeline[] { pipeline, client.pipeline() };
     }
 
-    protected void initPipeline(ChannelPipeline pipeline) {
+    protected void buildServerPipeline(Pipeline pipeline) throws Exception {
+        client.buildPipeline();
+    }
+
+    @Override
+    final protected Pipeline buildPipeline() throws Exception {
+        Pipeline pipeline = super.buildPipeline();
+        buildServerPipeline(pipeline);
+        pipeline.addLast(client);
+        return pipeline;
     }
 }

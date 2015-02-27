@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -14,26 +15,77 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
+import de.objektkontor.wsc.container.InboundHandler;
+import de.objektkontor.wsc.container.Pipeline;
 import de.objektkontor.wsc.container.common.config.ClientConfig;
+import de.objektkontor.wsc.container.common.handler.TLSHandler;
 
 /**
- * This class is designed to be the last Handler in the incoming pipeline as well as the last Handler
- * of the outgoing one. As such it is responsible for taking over messages from one pipeline to the
- * other - as implemented in the channelRead-method.
+ * This class is designed to be the last Handler in the incoming pipeline as
+ * well as the last Handler of the outgoing one. As such it is responsible for
+ * taking over messages from one pipeline to the other - as implemented in the
+ * channelRead-method.
  */
 @Sharable
-public class ProxyClient extends ChannelInboundHandlerAdapter {
+public class ProxyClient extends ChannelInboundHandlerAdapter implements InboundHandler {
 
     private final static AttributeKey<Channel> SOURCE_CHANNEL = AttributeKey.valueOf("sourceChannel");
     private final static AttributeKey<Channel> TARGET_CHANNEL = AttributeKey.valueOf("targetChannel");
 
-    private final ClientConfig config;
-    private final Bootstrap bootstrap;
+    protected final ClientConfig config;
+    protected final Bootstrap bootstrap;
+    protected Pipeline pipeline;
 
     public ProxyClient(ClientConfig config, EventLoopGroup group) {
         this.config = config;
         bootstrap = createBootstrap();
         bootstrap.group(group);
+    }
+
+    @Override
+    public String name() {
+        return "Proxy Client";
+    }
+
+    @Override
+    public Class<?> inputInboundType() {
+        return Object.class;
+    }
+
+    @Override
+    public Class<?> outputInboundType() {
+        return null;
+    }
+
+    @Override
+    public ChannelHandler create() {
+        return this;
+    }
+
+    public Pipeline pipeline() {
+        return pipeline;
+    }
+
+    protected void buildClientPipeline(Pipeline pipeline) {
+    }
+
+    protected void initChannelPipeline(ChannelPipeline channelPipeline) throws Exception {
+        pipeline.init(channelPipeline);
+    }
+
+    protected boolean needsFlush(Object message) {
+        return true;
+    }
+
+    protected void handleError(ChannelHandlerContext context, Throwable cause, Channel sourceChannel) {
+        sourceChannel.close();
+    }
+
+    void buildPipeline() throws Exception {
+        pipeline = new Pipeline("Client");
+        pipeline.addFirst(new TLSHandler(config.getTlsConfig()));
+        buildClientPipeline(pipeline);
+        pipeline.addLast(this);
     }
 
     private Bootstrap createBootstrap() {
@@ -45,46 +97,38 @@ public class ProxyClient extends ChannelInboundHandlerAdapter {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
                 ChannelPipeline pipeline = socketChannel.pipeline();
-                initPipeline(pipeline);
+                initChannelPipeline(pipeline);
             }
         });
         return bootstrap;
     }
 
-    protected void initPipeline(ChannelPipeline pipeline) {
-    }
-
-    protected boolean needsFlush(Object message) {
-        return true;
-    }
-
-    protected void handleError(ChannelHandlerContext context, Throwable cause, Channel sourceChannel) {
-        sourceChannel.close();
-    }
-
     /**
-     * This method is called whenever a message reaches this Handler via one of the two pipelines this Handler is a
-     * member of.
+     * This method is called whenever a message reaches this Handler via one of
+     * the two pipelines this Handler is a member of.
      */
     @Override
     final public void channelRead(final ChannelHandlerContext context, final Object message) throws Exception {
         // Three different cases need to be handled:
 
-        // Case 2: the message comes from the outgoing pipeline (so it is a response) - further handling is done in the receive-method:
+        // Case 2: the message comes from the outgoing pipeline (so it is a
+        // response) - further handling is done in the receive-method:
         Channel sourceChannel = context.channel().attr(SOURCE_CHANNEL).get();
         if (sourceChannel != null) {
             receive(sourceChannel, message);
             return;
         }
 
-        // Case 3: the message comes from the incoming pipeline, however there is already a target-channel present - so this one will be used again:
+        // Case 3: the message comes from the incoming pipeline, however there
+        // is already a target-channel present - so this one will be used again:
         Channel targetChannel = context.channel().attr(TARGET_CHANNEL).get();
         if (targetChannel != null) {
             send(context, targetChannel, message);
             return;
         }
 
-        // Case 1: the message comes from the incoming pipeline, no connection to the target has yet been established:
+        // Case 1: the message comes from the incoming pipeline, no connection
+        // to the target has yet been established:
         bootstrap.connect(config.getHost(), config.getPort()).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -92,7 +136,6 @@ public class ProxyClient extends ChannelInboundHandlerAdapter {
                 final Channel targetChannel = future.channel();
                 sourceChannel.attr(TARGET_CHANNEL).set(targetChannel);
                 targetChannel.attr(SOURCE_CHANNEL).set(sourceChannel);
-                targetChannel.pipeline().addLast("proxy", ProxyClient.this);
                 sourceChannel.closeFuture().addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {

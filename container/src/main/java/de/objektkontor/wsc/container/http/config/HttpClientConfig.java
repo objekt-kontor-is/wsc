@@ -2,19 +2,54 @@ package de.objektkontor.wsc.container.http.config;
 
 import de.objektkontor.config.ConfigParameter;
 import de.objektkontor.wsc.container.common.config.ClientConfig;
-import de.objektkontor.wsc.container.common.config.TLSConfig;
 
 public class HttpClientConfig extends ClientConfig {
 
-    @ConfigParameter("tls")
-    private TLSConfig tlsConfig = new TLSConfig();
+    @ConfigParameter
+    private int maxContentLength = 1024 * 1024;
 
-    public TLSConfig getTlsConfig() {
-        return tlsConfig;
+    public int getMaxContentLength() {
+        return maxContentLength;
     }
 
-    public HttpClientConfig setTlsConfig(TLSConfig sslConfig) {
-        tlsConfig = sslConfig;
+    public HttpClientConfig setMaxContentLength(int maxContentLength) {
+        this.maxContentLength = maxContentLength;
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setHost(String host) {
+        super.setHost(host);
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setPort(int port) {
+        super.setPort(port);
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setTcpNoDelay(boolean tcpNoDelay) {
+        super.setTcpNoDelay(tcpNoDelay);
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setKeepAlive(boolean keepAlive) {
+        super.setKeepAlive(keepAlive);
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setConnectTimeout(int connectTimeout) {
+        super.setConnectTimeout(connectTimeout);
+        return this;
+    }
+
+    @Override
+    public HttpClientConfig setReadTimeout(int readTimeout) {
+        super.setReadTimeout(readTimeout);
         return this;
     }
 }

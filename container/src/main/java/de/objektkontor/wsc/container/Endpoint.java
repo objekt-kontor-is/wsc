@@ -2,14 +2,15 @@ package de.objektkontor.wsc.container;
 
 import io.netty.channel.ChannelFuture;
 
+public interface Endpoint extends Resource {
 
-public interface Endpoint {
+    public abstract int port();
 
-    public abstract int getPort();
+    public abstract Pipeline pipeline();
 
-    public abstract void start() throws InterruptedException;
-
-    public abstract void stop() throws InterruptedException;
+    @Deprecated
+    public abstract Pipeline[] pipelines();
 
     public abstract ChannelFuture closeFuture();
+
 }

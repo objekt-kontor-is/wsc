@@ -22,6 +22,9 @@ public class ClientConfig {
     @ConfigParameter
     private int readTimeout = 0;
 
+    @ConfigParameter("tls")
+    private TLSServerConfig tlsConfig = new TLSServerConfig();
+
     public String getHost() {
         return host;
     }
@@ -73,6 +76,15 @@ public class ClientConfig {
 
     public ClientConfig setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+        return this;
+    }
+
+    public TLSServerConfig getTlsConfig() {
+        return tlsConfig;
+    }
+
+    public ClientConfig setTlsConfig(TLSServerConfig tlsConfig) {
+        this.tlsConfig = tlsConfig;
         return this;
     }
 }

@@ -38,7 +38,7 @@ public class TLSConfig {
         return this;
     }
 
-    public boolean getEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 

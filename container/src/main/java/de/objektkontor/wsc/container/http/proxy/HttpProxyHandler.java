@@ -1,20 +1,43 @@
-package de.objektkontor.wsc.container.proxy.http;
+package de.objektkontor.wsc.container.http.proxy;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpRequest;
 
 import java.net.InetSocketAddress;
 
+import de.objektkontor.wsc.container.InboundHandler;
 import de.objektkontor.wsc.container.common.config.ClientConfig;
 
-public class HttpProxyHandler extends ChannelInboundHandlerAdapter {
+public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements InboundHandler {
 
     private final ClientConfig config;
 
     public HttpProxyHandler(ClientConfig config) {
         this.config = config;
+    }
+
+    @Override
+    public String name() {
+        return "Proxy Headers";
+    }
+
+    @Override
+    public Class<?> inputInboundType() {
+        return HttpMessage.class;
+    }
+
+    @Override
+    public Class<?> outputInboundType() {
+        return HttpMessage.class;
+    }
+
+    @Override
+    public ChannelHandler create() {
+        return new HttpProxyHandler(config);
     }
 
     @Override
