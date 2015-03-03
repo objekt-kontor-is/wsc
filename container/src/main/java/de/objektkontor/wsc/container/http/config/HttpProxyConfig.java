@@ -1,6 +1,6 @@
 package de.objektkontor.wsc.container.http.config;
 
-import de.objektkontor.config.ConfigParameter;
+import de.objektkontor.config.annotation.ConfigParameter;
 
 public class HttpProxyConfig {
 

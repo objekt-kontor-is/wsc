@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>wsc-netty-core</artifactId>
+	<packaging>bundle</packaging>
+
+	<name>WSC Netty Core Bundle</name>
+
+	<parent>
+		<groupId>de.objekt-kontor</groupId>
+		<artifactId>wsc-netty-pom</artifactId>
+		<version>1.1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-buffer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-transport</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Export-Package>!org.osgi*,!javassist*,!de.objektkontor.wsc.netty.bundle,*</Export-Package>
+						<Private-Package>de.objektkontor.wsc.netty.bundle,io.netty.*;-split-package:=merge-first</Private-Package>
+						<Bundle-Activator>de.objektkontor.wsc.netty.bundle.Activator</Bundle-Activator>
+						<Import-Package>*;resolution:=optional</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

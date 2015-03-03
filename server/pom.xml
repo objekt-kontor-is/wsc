@@ -10,11 +10,16 @@
 	<parent>
 		<groupId>de.objekt-kontor</groupId>
 		<artifactId>wsc-pom</artifactId>
-		<version>1.0.0</version>
+		<version>1.1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
+		<!-- Configuration -->
+		<dependency>
+			<groupId>de.objekt-kontor</groupId>
+			<artifactId>config</artifactId>
+		</dependency>
 		<!-- OSGI -->
 		<dependency>
 			<groupId>org.apache.felix</groupId>
@@ -24,12 +29,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<!-- Configuration -->
-		<dependency>
-			<groupId>de.objektkontor</groupId>
-			<artifactId>config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Assembly url protocol handler -->
 		<dependency>

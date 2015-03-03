@@ -2,54 +2,40 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>wsc-container</artifactId>
+	<artifactId>wsc-netty-protocol</artifactId>
 	<packaging>bundle</packaging>
 
-	<name>Web Service Container</name>
+	<name>WSC Netty Protocol Bundle</name>
 
 	<parent>
 		<groupId>de.objekt-kontor</groupId>
-		<artifactId>wsc-pom</artifactId>
+		<artifactId>wsc-netty-pom</artifactId>
 		<version>1.1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
-		<!-- Configuration -->
 		<dependency>
-			<groupId>de.objekt-kontor</groupId>
-			<artifactId>config</artifactId>
-		</dependency>
-		<!-- OSGI -->
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec</artifactId>
 		</dependency>
-		<!-- Netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>de.objekt-kontor</groupId>
 			<artifactId>wsc-netty-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.objekt-kontor</groupId>
-			<artifactId>wsc-netty-protocol</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<!-- Bytecode Generator -->
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<!-- Logging -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -60,8 +46,10 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Export-Package>de.objektkontor.wsc.container*</Export-Package>
-						<Bundle-Activator>de.objektkontor.wsc.bundle.Activator</Bundle-Activator>
+						<Export-Package>io.netty.handler*</Export-Package>
+						<Private-Package>de.objektkontor.wsc.netty.bundle</Private-Package>
+						<Bundle-Activator>de.objektkontor.wsc.netty.bundle.Activator</Bundle-Activator>
+						<Import-Package>*;resolution:=optional</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

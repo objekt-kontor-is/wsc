@@ -59,6 +59,8 @@ public class Activator implements BundleActivator {
     }
 
     private List<BundleLocator> getBundles(File bundleDir) throws IOException {
+        if (!bundleDir.exists())
+            throw new IOException("Bundle dir not found: " + bundleDir);
         File[] bundleFiles = bundleDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -95,7 +97,7 @@ public class Activator implements BundleActivator {
             bundles.put(bundleKey, bundle);
             locations.put(bundle.getLocation(), bundleKey);
         }
-        for (BundleConfig bundleConfig : config.getBundleConfigs()) {
+        for (BundleConfig bundleConfig : config.getBundles()) {
             if (bundleConfig.getDependenciesDir() != null) {
                 File dependenciesDir = new File(bundleConfig.getDependenciesDir());
                 for (BundleLocator bundleLocator : getBundles(dependenciesDir))

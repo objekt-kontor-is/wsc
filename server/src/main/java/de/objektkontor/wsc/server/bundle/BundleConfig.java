@@ -1,6 +1,6 @@
 package de.objektkontor.wsc.server.bundle;
 
-import de.objektkontor.config.ConfigParameter;
+import de.objektkontor.config.annotation.ConfigParameter;
 
 public class BundleConfig {
 

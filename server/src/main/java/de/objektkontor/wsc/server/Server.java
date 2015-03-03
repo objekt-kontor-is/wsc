@@ -52,7 +52,6 @@ public class Server {
 
         ConfigLoader configLoader = new ConfigLoader(new Configuration(), "wsc");
         ServerConfig config = configLoader.loadConfig(new ServerConfig());
-        config.setBundleConfigs(configLoader);
 
         Activator activator = new Activator(config);
         final Felix felix = new Felix(createFelixConfig(activator, config));
