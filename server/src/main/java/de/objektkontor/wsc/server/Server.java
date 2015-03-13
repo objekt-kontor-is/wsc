@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.objektkontor.config.ConfigLoader;
-import de.objektkontor.config.Configuration;
+import de.objektkontor.config.PropertyBackend;
 
 public class Server {
 
@@ -50,7 +50,7 @@ public class Server {
     public static void main(String... args) throws Exception {
         System.getProperties().setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
-        ConfigLoader configLoader = new ConfigLoader(new Configuration(), "wsc");
+        ConfigLoader configLoader = new ConfigLoader(new PropertyBackend(), "wsc", true);
         ServerConfig config = configLoader.loadConfig(new ServerConfig());
 
         Activator activator = new Activator(config);

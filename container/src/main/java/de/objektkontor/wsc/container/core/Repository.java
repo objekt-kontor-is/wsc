@@ -30,7 +30,7 @@ public class Repository implements TransactionContent {
 
     public boolean hasResource(ResourceId<?> resourceId) {
         if (resourceId == null)
-            throw new IllegalArgumentException("resourceId may not be null");
+            throw new IllegalArgumentException("resourceId cannot be null");
         assert resourceId != null;
         return resources.containsKey(resourceId);
     }
@@ -38,14 +38,14 @@ public class Repository implements TransactionContent {
     @SuppressWarnings("unchecked")
     public <R extends Resource> R getResource(ResourceId<R> resourceId) {
         if (resourceId == null)
-            throw new IllegalArgumentException("resourceId may not be null");
+            throw new IllegalArgumentException("resourceId cannot be null");
         return (R) resources.get(resourceId);
     }
 
     @Override
     public void register(Resource resource) {
         if (resource == null)
-            throw new IllegalArgumentException("resource may not be null");
+            throw new IllegalArgumentException("resource cannot be null");
         if (resources.containsKey(resource.id()))
             throw new IllegalStateException("Resource already registered");
         resources.put(resource.id(), resource);
@@ -55,7 +55,7 @@ public class Repository implements TransactionContent {
 
     public void init(ResourceId<?> resourceId) throws Exception {
         if (resourceId == null)
-            throw new IllegalArgumentException("resourceId may not be null");
+            throw new IllegalArgumentException("resourceId cannot be null");
         Resource resource = resources.get(resourceId);
         if (resource == null)
             throw new IllegalStateException("Resource is not registered");
@@ -70,7 +70,7 @@ public class Repository implements TransactionContent {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validate(ResourceId<?> resourceId) throws Exception {
         if (resourceId == null)
-            throw new IllegalArgumentException("resourceId may not be null");
+            throw new IllegalArgumentException("resourceId cannot be null");
         Resource resource = resources.get(resourceId);
         if (resource == null)
             throw new IllegalStateException("Resource is not registered");
@@ -82,7 +82,7 @@ public class Repository implements TransactionContent {
     @Override
     public void ungister(Resource resource) {
         if (resource == null)
-            throw new IllegalArgumentException("resource may not be null");
+            throw new IllegalArgumentException("resource cannot be null");
         if (!resources.containsKey(resource.id()))
             throw new IllegalStateException("Resource is not registered");
         resources.remove(resource.id());
@@ -94,7 +94,7 @@ public class Repository implements TransactionContent {
     @Override
     public void connect(ResourceId<?> sourceId, ResourceId<?> targetId) {
         if (sourceId == null || targetId == null)
-            throw new IllegalArgumentException("sourceId and targetId may not be null");
+            throw new IllegalArgumentException("sourceId and targetId cannot be null");
         Set<ResourceId<?>> targets = connectionTargets.get(sourceId);
         Set<ResourceId<?>> sources = connectionSources.get(targetId);
         if (targets.contains(targetId) || sources.contains(sourceId))
@@ -106,7 +106,7 @@ public class Repository implements TransactionContent {
     @Override
     public void disconnect(ResourceId<?> sourceId, ResourceId<?> targetId) {
         if (sourceId == null || targetId == null)
-            throw new IllegalArgumentException("sourceId and targetId may not be null");
+            throw new IllegalArgumentException("sourceId and targetId cannot be null");
         Set<ResourceId<?>> targets = connectionTargets.get(sourceId);
         Set<ResourceId<?>> sources = connectionSources.get(targetId);
         if (!targets.contains(targetId) || !sources.contains(sourceId))

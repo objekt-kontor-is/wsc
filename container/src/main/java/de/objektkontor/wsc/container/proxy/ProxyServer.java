@@ -5,20 +5,15 @@ import de.objektkontor.wsc.container.Pipeline;
 import de.objektkontor.wsc.container.common.config.ServerConfig;
 import de.objektkontor.wsc.container.core.AbstractEndpoint;
 
-public class ProxyServer extends AbstractEndpoint<ServerConfig> {
+public class ProxyServer<C extends ServerConfig> extends AbstractEndpoint<C> {
 
     public static final String PROXY_HANDLER = "proxy";
 
     private final ProxyClient client;
 
-    public ProxyServer(String id, ServerConfig config, EventLoopGroup group, ProxyClient client) {
+    public ProxyServer(String id, C config, EventLoopGroup group, ProxyClient client) {
         super(id, config, group);
         this.client = client;
-    }
-
-    @Override
-    public Pipeline[] pipelines() {
-        return new Pipeline[] { pipeline, client.pipeline() };
     }
 
     protected void buildServerPipeline(Pipeline pipeline) throws Exception {

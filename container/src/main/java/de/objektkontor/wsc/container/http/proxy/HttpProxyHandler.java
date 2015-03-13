@@ -1,6 +1,7 @@
 package de.objektkontor.wsc.container.http.proxy;
 
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -12,6 +13,7 @@ import java.net.InetSocketAddress;
 import de.objektkontor.wsc.container.InboundHandler;
 import de.objektkontor.wsc.container.common.config.ClientConfig;
 
+@Sharable
 public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements InboundHandler {
 
     private final ClientConfig config;
@@ -37,7 +39,7 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements In
 
     @Override
     public ChannelHandler create() {
-        return new HttpProxyHandler(config);
+        return this;
     }
 
     @Override

@@ -1,8 +1,9 @@
 package de.objektkontor.wsc.container.common.config;
 
+import de.objektkontor.config.ObservableConfig;
 import de.objektkontor.config.annotation.ConfigParameter;
 
-public class ClientConfig {
+public class ClientConfig extends ObservableConfig {
 
     @ConfigParameter
     private String host;

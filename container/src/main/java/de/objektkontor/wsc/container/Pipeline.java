@@ -7,6 +7,7 @@ import io.netty.channel.ChannelPipeline;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class Pipeline {
 
@@ -36,6 +37,18 @@ public class Pipeline {
 
     public void addLast(Handler handler) {
         handlers.addLast(handler);
+    }
+
+    public Handler replaceHandler(Handler newHandler) {
+        ListIterator<Handler> i = handlers.listIterator();
+        while (i.hasNext()) {
+            Handler handler = i.next();
+            if (handler.name().equals(newHandler.name())) {
+                i.set(newHandler);
+                return handler;
+            }
+        }
+        return null;
     }
 
     public Handler removeHandler(String name) {

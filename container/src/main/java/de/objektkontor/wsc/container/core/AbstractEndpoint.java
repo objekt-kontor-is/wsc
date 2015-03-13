@@ -1,43 +1,48 @@
 package de.objektkontor.wsc.container.core;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.objektkontor.config.ConfigComparator;
+import de.objektkontor.config.ConfigObserver;
+import de.objektkontor.config.ConfigUpdate;
 import de.objektkontor.wsc.container.Endpoint;
 import de.objektkontor.wsc.container.Pipeline;
 import de.objektkontor.wsc.container.common.config.ServerConfig;
 import de.objektkontor.wsc.container.common.handler.TLSServerHandler;
 
-public abstract class AbstractEndpoint<C extends ServerConfig> extends AbstractResource implements Endpoint {
+public abstract class AbstractEndpoint<C extends ServerConfig> extends AbstractResource implements Endpoint, ConfigObserver<C> {
 
     private final static Logger log = LoggerFactory.getLogger(AbstractEndpoint.class);
 
     protected final C config;
+    protected volatile ServerBootstrap bootstrap;
+    protected volatile ServerChannel channel;
+
     protected final EventLoopGroup eventLoopGroup;
     protected Pipeline pipeline;
-    protected ServerBootstrap bootstrap;
-    protected ServerChannel channel;
 
     public AbstractEndpoint(String id, C config, EventLoopGroup eventLoopGroup) {
         super(Endpoint.class, id);
-        this.config = config;
         this.eventLoopGroup = eventLoopGroup;
+        this.config = config;
+        this.config.setObserver(this);
     }
 
     @Override
     public Connector<?>[] init() throws Exception {
         pipeline = buildPipeline();
-        bootstrap = createBootstrap();
+        bootstrap = createBootstrap(config);
         return Connector.NO_CONNECTORS;
     }
 
@@ -74,21 +79,55 @@ public abstract class AbstractEndpoint<C extends ServerConfig> extends AbstractR
     }
 
     @Override
-    @Deprecated
-    public Pipeline[] pipelines() {
-        return new Pipeline[] { pipeline };
-    }
+    public void reconfigure(final C newConfig, List<ConfigUpdate> updates) {
+        updates.add(new ConfigUpdate() {
 
-    @Override
-    public ChannelFuture closeFuture() {
-        return channel.closeFuture();
-    }
+            private ServerChannel newChannel = channel;
+            private ServerBootstrap newBootstrap = bootstrap;
+            private TLSServerHandler newTLSHandler = null;
 
-    protected void initBootstrap(ServerBootstrap bootstrap) {
-        bootstrap.channel(NioServerSocketChannel.class);
-        bootstrap.option(ChannelOption.SO_BACKLOG, config.getSocketBacklog());
-        bootstrap.childOption(ChannelOption.TCP_NODELAY, config.isClientTcpNoDelay());
-        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, config.isClientKeepAlive());
+            @Override
+            public void prepare() throws Exception {
+                // take server channel out of thread group
+                channel.deregister().sync();
+
+                if (needsNewBootstrap(newConfig))
+                    newBootstrap = createBootstrap(newConfig);
+
+                if (config.getPort() != newConfig.getPort())
+                    newChannel = (ServerChannel) newBootstrap.bind(newConfig.getPort()).sync().channel();
+
+                if (needsNewTLSHandler(newConfig))
+                    newTLSHandler = new TLSServerHandler(newConfig.getTlsConfig());
+            }
+
+            @Override
+            public void apply() {
+                // apply new components and cleanup old ones
+                if (bootstrap != newBootstrap)
+                    bootstrap = newBootstrap;
+
+                if (channel != newChannel) {
+                    channel.close().syncUninterruptibly();
+                    channel = newChannel;
+                    log.info(id() + ": listenning on port: " + port());
+                }
+
+                if (newTLSHandler != null)
+                    pipeline.replaceHandler(newTLSHandler);
+
+                // reactivate server channel
+                eventLoopGroup.register(channel);
+            }
+
+            @Override
+            public void discard() {
+                if (channel != newChannel)
+                    newChannel.close().syncUninterruptibly();
+                // reactivate server channel
+                eventLoopGroup.register(channel).syncUninterruptibly();
+            }
+        });
     }
 
     protected Pipeline buildPipeline() throws Exception {
@@ -97,31 +136,30 @@ public abstract class AbstractEndpoint<C extends ServerConfig> extends AbstractR
         return pipeline;
     }
 
-    protected void initChannelPipeline(ChannelPipeline channelPipeline) throws Exception {
-        pipeline.init(channelPipeline);
+    private boolean needsNewBootstrap(C newConfig) {
+        return config.getSocketBacklog() != newConfig.getSocketBacklog() ||
+                config.isClientTcpNoDelay() != newConfig.isClientTcpNoDelay() ||
+                config.isClientKeepAlive() != newConfig.isClientKeepAlive();
     }
 
-    private ServerBootstrap createBootstrap() {
+    private ServerBootstrap createBootstrap(C config) {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(eventLoopGroup);
-        initBootstrap(bootstrap);
+        bootstrap.channel(NioServerSocketChannel.class);
+        bootstrap.option(ChannelOption.SO_BACKLOG, config.getSocketBacklog());
+        bootstrap.childOption(ChannelOption.TCP_NODELAY, config.isClientTcpNoDelay());
+        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, config.isClientKeepAlive());
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
-                initChannelPipeline(socketChannel.pipeline());
+                pipeline.init(socketChannel.pipeline());
             }
         });
         return bootstrap;
     }
 
-    protected void reconfigure(ServerBootstrap bootstrap) throws InterruptedException {
-        // take server channel out of thread group
-        channel.deregister().sync();
-
-        // TODO: reconfigure bootstrap and server channel
-
-        // reactivate server channel
-        eventLoopGroup.register(channel).sync();
+    private boolean needsNewTLSHandler(C newConfig) {
+        return ! ConfigComparator.deepEquals(config.getTlsConfig(), newConfig.getTlsConfig());
     }
 
     @Override

@@ -1,9 +1,10 @@
 package de.objektkontor.wsc.container.common.config;
 
+import de.objektkontor.config.ObservableConfig;
 import de.objektkontor.config.annotation.ConfigParameter;
 
 
-public class TLSConfig {
+public class TLSConfig extends ObservableConfig {
 
     @ConfigParameter
     private boolean enabled = false;

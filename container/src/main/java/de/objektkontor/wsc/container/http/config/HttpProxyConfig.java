@@ -1,8 +1,9 @@
 package de.objektkontor.wsc.container.http.config;
 
+import de.objektkontor.config.ObservableConfig;
 import de.objektkontor.config.annotation.ConfigParameter;
 
-public class HttpProxyConfig {
+public class HttpProxyConfig extends ObservableConfig {
 
     @ConfigParameter("")
     private HttpServerConfig serverConfig = new HttpServerConfig();
